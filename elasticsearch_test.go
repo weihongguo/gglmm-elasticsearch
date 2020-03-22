@@ -21,12 +21,12 @@ type TestDoc struct {
 
 type TestSearchHits struct {
 	SearchHits
-	TestDocs []TestDoc `json:"hits"`
+	Hits []TestDoc `json:"hits"`
 }
 
 type TestSearchResponse struct {
 	SearchResponse
-	TestSearchHits `json:"hits"`
+	Hits TestSearchHits `json:"hits"`
 }
 
 func TestElasticSearch(t *testing.T) {
@@ -44,11 +44,25 @@ func TestElasticSearch(t *testing.T) {
 		String: "1.3",
 		Slice:  []int{2, 3, 4},
 	}
-	res, err := client.Index("test", "2", test)
+	indexResponse, err := client.Index("test", "1", test)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%+v\n", res)
+	t.Logf("%+v\n", indexResponse)
+
+	indexResponse, err = client.Create("test", "10", test)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%+v\n", indexResponse)
+
+	doc := make(map[string]interface{})
+	doc["String"] = "1.4"
+	indexResponse, err = client.Update("test", "10", doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%+v\n", indexResponse)
 
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
@@ -56,6 +70,24 @@ func TestElasticSearch(t *testing.T) {
 		},
 	}
 	searchResponse := &TestSearchResponse{}
+	err = client.Search("test", query, searchResponse)
+	if err != nil {
+		log.Fatal(err)
+	}
+	t.Logf("%+v\n", searchResponse)
+
+	indexResponse, err = client.Delete("test", "10")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%+v\n", indexResponse)
+
+	query = map[string]interface{}{
+		"query": map[string]interface{}{
+			"match_all": map[string]interface{}{},
+		},
+	}
+	searchResponse = &TestSearchResponse{}
 	err = client.Search("test", query, searchResponse)
 	if err != nil {
 		log.Fatal(err)
