@@ -1,4 +1,4 @@
-module gglmm-elasticsearch
+module github.com/weihongguo/gglmm-elasticsearch
 
 go 1.13
 
