@@ -64,6 +64,13 @@ func TestElasticSearch(t *testing.T) {
 	}
 	t.Logf("%+v\n", indexResponse)
 
+	getResponse := TestDoc{}
+	err = client.Get("test", "10", &getResponse)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%+v\n", getResponse)
+
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
 			"match_all": map[string]interface{}{},

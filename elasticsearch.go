@@ -107,6 +107,24 @@ func (client *Client) Update(index string, id string, doc interface{}) (*IndexRe
 	return indexResponse, nil
 }
 
+// Get --
+func (client *Client) Get(index string, id string, response interface{}) error {
+	req := esapi.GetRequest{
+		Index:      index,
+		DocumentID: id,
+	}
+	res, err := req.Do(context.Background(), client.esClient)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if err := json.NewDecoder(res.Body).Decode(response); err != nil {
+		return err
+	}
+	return nil
+}
+
 // Delete --
 func (client *Client) Delete(index string, id string) (*IndexResponse, error) {
 	req := esapi.DeleteRequest{
