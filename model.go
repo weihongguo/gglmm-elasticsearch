@@ -27,10 +27,6 @@ type SearchHits struct {
 	MaxScore float64 `json:"max_score"`
 }
 
-// GetResponse --
-type GetResponse struct {
-}
-
 // SearchResponse --
 type SearchResponse struct {
 	Took     int  `json:"took"`
